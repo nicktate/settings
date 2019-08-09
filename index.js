@@ -2,8 +2,15 @@ const createScheduler = require('probot-scheduler')
 const getConfig = require('probot-config')
 const mergeArrayByName = require('./lib/mergeArrayByName')
 
+const INTERVAL = process.env.PROBOT_SCHEDULE_INTERVAL
+    ? parseInt(process.env.PROBOT_SCHEDULE_INTERVAL)
+    : 1000 * 60 * 60 * 4
+
 module.exports = (robot, _, Settings = require('./lib/settings')) => {
-  createScheduler(robot)
+  createScheduler(robot, {
+    interval: INTERVAL
+  })
+
   robot.on('push', async context => {
     const payload = context.payload
     const defaultBranch = payload.ref === 'refs/heads/' + payload.repository.default_branch
